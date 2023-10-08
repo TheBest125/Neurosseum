@@ -1,27 +1,59 @@
 import pygame
-from constants.constants import SCREEN_WIDTH,SCREEN_HEIGHT
+from components.Sheet_Handler import Spritesheet
+from constants.constants import SCREEN_WIDTH, SCREEN_HEIGHT
 from pygame.locals import (
-K_w,
-K_a,
-K_s,
-K_d,
-K_j,
+    K_w,
+    K_a,
+    K_s,
+    K_d,
+    K_j,
 )
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super(Player, self).__init__()
-        self.surf = pygame.Surface((75, 25))
-        self.surf.fill((255, 255, 255))
-        self.rect = self.surf.get_rect()
+
+        self.PlayerSheet = Spritesheet('constants/playersheet.png')
+        self.PlayerSheet.create_dict([5, 8, 7, 3, 7], ['idle', 'run', 'hit', 'squat', 'die'])
+        self.PlayerSheet_left = Spritesheet('constants/playersheet_left.png')
+        self.PlayerSheet_left.create_dict([5, 8, 7, 3, 7], ['idle', 'run', 'hit', 'squat', 'die'])
+        self.frame = 0
+        self.state = 'idle'
+        self.sprite = self.PlayerSheet.animation_dict[self.state][self.frame]
+        self.rect = self.sprite.get_rect()
+        self.interval = 4
+        self.direction = 0
+
+        # Create an initial mask for the first frame
+        self.mask = pygame.mask.from_surface(self.sprite)
+
     def update(self, pressed_keys):
+        sprites = self.PlayerSheet_left.animation_dict[self.state] if self.direction else self.PlayerSheet.animation_dict[self.state]
+        sprite_index = (self.frame // self.interval) % len(sprites)
+        self.sprite = sprites[sprite_index]
+        self.frame += 1
+        self.state = 'idle'
+
         if pressed_keys[K_w]:
+            self.direction = 0
+            self.state = 'run'
             self.rect.move_ip(0, -5)
         if pressed_keys[K_s]:
+            self.direction = 1
+            self.state = 'run'
             self.rect.move_ip(0, 5)
         if pressed_keys[K_a]:
+            self.direction = 1
+            self.state = 'run'
             self.rect.move_ip(-5, 0)
         if pressed_keys[K_d]:
+            self.direction = 0
+            self.state = 'run'
             self.rect.move_ip(5, 0)
+
+        # Update the mask after moving
+        self.mask = pygame.mask.from_surface(self.sprite)
+
         if self.rect.left < 0:
             self.rect.left = 0
         if self.rect.right > SCREEN_WIDTH:
