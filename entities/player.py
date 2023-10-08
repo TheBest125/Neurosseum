@@ -23,33 +23,37 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.sprite.get_rect()
         self.interval = 4
         self.direction = 0
-
-        # Create an initial mask for the first frame
         self.mask = pygame.mask.from_surface(self.sprite)
+        self.looping_animation = False
+        
 
     def update(self, pressed_keys):
         sprites = self.PlayerSheet_left.animation_dict[self.state] if self.direction else self.PlayerSheet.animation_dict[self.state]
         sprite_index = (self.frame // self.interval) % len(sprites)
         self.sprite = sprites[sprite_index]
-        self.frame += 1
-        self.state = 'idle'
-
-        if pressed_keys[K_w]:
-            self.direction = 0
-            self.state = 'run'
-            self.rect.move_ip(0, -5)
-        if pressed_keys[K_s]:
-            self.direction = 1
-            self.state = 'run'
-            self.rect.move_ip(0, 5)
-        if pressed_keys[K_a]:
-            self.direction = 1
-            self.state = 'run'
-            self.rect.move_ip(-5, 0)
-        if pressed_keys[K_d]:
-            self.direction = 0
-            self.state = 'run'
-            self.rect.move_ip(5, 0)
+        self.frame += 1 
+        if pressed_keys[K_j]:
+            self.state = 'hit'
+            self.looping_animation = True
+        if (self.frame // self.interval) % len(sprites) == len(sprites)-1: self.looping_animation = False ; self.frame=0
+        if not self.looping_animation:
+            self.state = 'idle'
+            if pressed_keys[K_w]:
+                self.direction = 0
+                self.state = 'run'
+                self.rect.move_ip(0, -5)
+            if pressed_keys[K_s]:
+                self.direction = 1
+                self.state = 'run'
+                self.rect.move_ip(0, 5)
+            if pressed_keys[K_a]:
+                self.direction = 1
+                self.state = 'run'
+                self.rect.move_ip(-5, 0)
+            if pressed_keys[K_d]:
+                self.direction = 0
+                self.state = 'run'
+                self.rect.move_ip(5, 0)
 
         # Update the mask after moving
         self.mask = pygame.mask.from_surface(self.sprite)

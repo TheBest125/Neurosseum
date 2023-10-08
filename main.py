@@ -47,7 +47,7 @@ while(running):
     
     player.update(pressed_keys)
 
-    screen.fill((255, 255, 255))
+    screen.fill((100, 235, 0))
 
     screen.blit(player.sprite, player.rect)
     

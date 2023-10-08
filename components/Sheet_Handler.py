@@ -8,14 +8,14 @@ class Spritesheet:
 
     def get_sprite(self, x, y, w, h):
         sprite = pygame.Surface((w, h))
-        sprite.set_colorkey((255, 255, 255))
+        sprite.set_colorkey((0, 0, 0))
         sprite.blit(self.sprite_sheet, (0, 0), (x, y, w, h))
         sprite = pygame.transform.scale(sprite, (w * 4, h * 4))
         return sprite
 
     def create_dict(self, frames, names):
         for i, num_frames in enumerate(frames):
-            animation = []  # Initialize the animation list inside the outer loop
+            animation = []  
             for frame_index in range(num_frames):
                 sprite = self.get_sprite(frame_index * 32, i * 32, 32, 32)
                 animation.append(sprite)
