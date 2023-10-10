@@ -35,6 +35,7 @@ class Player(pygame.sprite.Sprite):
         if pressed_keys[K_j]:
             self.state = 'hit'
             self.looping_animation = True
+            self.frame=0
         if (self.frame // self.interval) % len(sprites) == len(sprites)-1: self.looping_animation = False ; self.frame=0
         if not self.looping_animation:
             self.state = 'idle'
